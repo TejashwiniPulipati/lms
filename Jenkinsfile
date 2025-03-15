@@ -17,7 +17,7 @@ pipeline {
            }
        }
       
-       stage('Publish LMS') {
+       stage('Release LMS') {
            steps {
                script {
                    def packageJson = readJSON file: 'webapp/package.json'
