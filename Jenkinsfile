@@ -1,5 +1,5 @@
 pipeline {
-   agent deploy
+   agent any
    stages {
        stage('Code Quality') {
            steps {
