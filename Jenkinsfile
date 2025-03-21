@@ -35,13 +35,8 @@ pipeline {
 
         stage('Setup Terraform') {
             steps {
+                cd 'terraform'
                 sh 'terraform init'
-            }
-        }
-
-        stage('Provision Docker Server') {
-            steps {
-                script {
                     // -auto-approve means Terraform will apply the changes without asking for confirmation.
                     //returnStdout: true captures Terraform's output as a variable.
                     //.trim() removes unnecessary whitespaces from the output.
@@ -51,14 +46,15 @@ pipeline {
                     //If the server already exists, Terraform will return:
                     //Terraform Output: 
                     //No changes. Infrastructure is up-to-date.
-                    def terraformOutput = sh(script: 'terraform apply -auto-approve', returnStdout: true).trim()
-                    echo "Terraform Output: ${terraformOutput}"
-                }
+                def terraformOutput = sh(script: 'terraform apply -auto-approve', returnStdout: true).trim()
+                echo "Terraform Output: ${terraformOutput}"
+                
             }
         }
 
         stage('Terraform Apply') {
             steps {
+                cd 'terraform'
                 sh 'terraform apply -auto-approve'
             }
         }
