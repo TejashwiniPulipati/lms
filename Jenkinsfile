@@ -53,7 +53,8 @@ pipeline {
                     //If the server already exists, Terraform will return:
                     //Terraform Output: 
                     //No changes. Infrastructure is up-to-date.
-                    def terraformOutput = sh(script: 'cd terraform && terraform apply -auto-approve', returnStdout: true).trim()
+                    def terraformOutput = sh(script: 'cd terraform && terraform apply -auto-approve -var="aws_access_key=${AWS_ACCESS_KEY}" \
+                        -var="aws_secret_key=${AWS_SECRET_KEY}"', returnStdout: true).trim()
                     echo "Terraform Output: ${terraformOutput}"
                 }
             }
@@ -62,7 +63,8 @@ pipeline {
         stage('Terraform Apply') {
             steps {
                 script {
-                    sh 'cd terraform && terraform apply -auto-approve'
+                    sh 'cd terraform && terraform apply -auto-approve -var="aws_access_key=${AWS_ACCESS_KEY}" \
+                        -var="aws_secret_key=${AWS_SECRET_KEY}"'
                 }
             }
         }
