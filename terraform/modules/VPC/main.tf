@@ -8,7 +8,7 @@ resource "aws_vpc" "vpc" {
 }
 
 # Web Subnet
-resource "aws_subnet" "public" {
+resource "aws_subnet" "public_subnet" {
   vpc_id     = aws_vpc.vpc.id
   cidr_block = var.public_subnet_cidr
   availability_zone = var.availability_zone
