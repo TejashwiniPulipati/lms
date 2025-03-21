@@ -45,7 +45,7 @@ resource "aws_route_table" "public-rt" {
 # Web Subnet Association
 resource "aws_route_table_association" "rt-asc" {
   subnet_id      = aws_subnet.public.id
-  route_table_id = aws_route_table.public.id
+  route_table_id = aws_route_table.public-rt.id
 }
 
 # NACL
