@@ -1,71 +1,30 @@
 pipeline {
     agent any
-
     environment {
-        REGISTRY_CREDENTIALS = "dockerhub-credentials"
-        NETWORK_NAME = "lms-network"
-    }
+        // More detail: 
+        // https://jenkins.io/doc/book/pipeline/jenkinsfile/#usernames-and-passwords
+        NEXUS_CRED = credentials('nexus')
+   }
 
     stages {
-        stage('Extract Version') {
+        stage('Build') {
             steps {
-                script {
-                    def packageJson = readJSON file: 'webapp/package.json'
-                    env.APP_VERSION = packageJson.version
-                    echo "App Version: ${APP_VERSION}"
-                }
+                echo 'Building..'
+                sh 'cd webapp && npm install && npm run build'
             }
         }
-
-        stage('Build and Push Docker Images') {
+        stage('Test') {
             steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: REGISTRY_CREDENTIALS, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh """
-                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                        
-                        docker build -t pulipatitejashwini/lms-be:${APP_VERSION} api/
-                        docker build -t pulipatitejashwini/lms-fe:${APP_VERSION} webapp/
-
-                        docker push pulipatitejashwini/lms-be:${APP_VERSION}
-                        docker push pulipatitejashwini/lms-fe:${APP_VERSION}
-                        """
-                    }
-                }
+                echo 'Testing..'
+                sh 'cd webapp && sudo docker container run --rm -e SONAR_HOST_URL="http://20.172.187.108:9000" -e SONAR_LOGIN="sqp_cae41e62e13793ff17d58483fb6fb82602fe2b48" -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms'
             }
         }
-
-        stage('Deploy on Docker Server') {
+        stage('Release') {
             steps {
-                script {
-                    sh """
-                    # Stop and remove old containers in the network
-                    docker ps --filter "network=${NETWORK_NAME}" -q | xargs -r docker rm -f
-                    docker network rm ${NETWORK_NAME} || true
-                    docker network create ${NETWORK_NAME} || true
-
-                    # Start Database Container
-                    docker container rm -f lms-db || true
-                    docker run -dt --name lms-db -p 5432:5432 \
-                        -e POSTGRES_USER=postgres \
-                        -e POSTGRES_PASSWORD=app12345 \
-                        -e POSTGRES_DB=lmsdb \
-                        --network ${NETWORK_NAME} postgres
-
-                    # Start Backend Container
-                    docker pull pulipatitejashwini/lms-be:${APP_VERSION}
-                    docker container rm -f lms-be || true
-                    docker run -dt --name lms-be -p 8081:8080 \
-                        -e DATABASE_URL="postgresql://postgres:app12345@lms-db:5432/lmsdb" \
-                        --network ${NETWORK_NAME} pulipatitejashwini/lms-be:${APP_VERSION}
-
-                    # Start Frontend Container
-                    docker pull pulipatitejashwini/lms-fe:${APP_VERSION}
-                    docker container rm -f lms-fe || true
-                    docker run -dt --name lms-fe -p 80:80 \
-                        --network ${NETWORK_NAME} pulipatitejashwini/lms-fe:${APP_VERSION}
-                    """
-                }
+                echo 'Release Nexus'
+                sh 'rm -rf *.zip'
+                sh 'cd webapp && zip dist-${BUILD_NUMBER}.zip -r dist'
+                sh 'cd webapp && curl -v -u $Username:$Password --upload-file dist-${BUILD_NUMBER}.zip http://20.172.187.108:8081/repository/lms/'
             }
         }
     }
