@@ -6,7 +6,7 @@ resource "aws_instance" "ec2" {
     vpc_security_group_ids = var.vpc_security_group_ids
     user_data              = var.user_data
 
-    tag = {
+    tags = {
         Name = "${var.instance_name}"
     }
 }
