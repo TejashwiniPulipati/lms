@@ -10,15 +10,8 @@ npm install
 npm run build
 ls dist
 sudo apt install nginx -y
-ls /var/www/html
-cat /var/www/html/index.nginx-debian.html
-sudo rm -rf /var/www/html/*
-sudo mkdir -p /var/www/html/
-ls /var/www/html
 sudo cp -r ~/lms/webapp/dist/* /var/www/html
 
-
-\
 
 
 
