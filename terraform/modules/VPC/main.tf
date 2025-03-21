@@ -44,7 +44,7 @@ resource "aws_route_table" "public-rt" {
 
 # Web Subnet Association
 resource "aws_route_table_association" "rt-asc" {
-  subnet_id      = aws_subnet.public.id
+  subnet_id      = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.public-rt.id
 }
 
@@ -78,7 +78,7 @@ resource "aws_network_acl" "nacl" {
 # NACL Associations - Web
 resource "aws_network_acl_association" "nacl-asc" {
   network_acl_id = aws_network_acl.nacl.id
-  subnet_id      = aws_subnet.public.id
+  subnet_id      = aws_subnet.public_subnet.id
 }
 
 # Web Security Group
