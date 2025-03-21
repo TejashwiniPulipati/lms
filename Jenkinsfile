@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        aws_access_key = credentials("aws-access-key")
-        aws_secret_key = credentials("aws-secret-key")
+        AWS_ACCESS_KEY = credentials("aws-access-key")
+        AWS_SECRET_KEY = credentials("aws-secret-key")
         REGISTRY_CREDENTIALS = "dockerhub-credentials"
     }    
 
