@@ -1,5 +1,5 @@
 module "lms_vpc" {
-  source             = "./modules/vpc"
+  source             = "./modules/VPC"
   vpc_cidr           = "10.0.0.0/16"
   public_subnet_cidr = "10.0.1.0/24"
   availability_zone  = "eu-west-2a"
@@ -7,7 +7,7 @@ module "lms_vpc" {
 }
 
 module "lms_ec2" {
-  source                 = "./modules/ec2"
+  source                 = "./modules/EC2"
   ami                    = "ami-0075013580f6322a1"
   instance_type          = "t2.micro"
   subnet_id              = module.lms_vpc.public_subnet.id
