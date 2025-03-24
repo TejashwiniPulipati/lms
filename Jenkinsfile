@@ -37,8 +37,8 @@ pipeline {
             steps {
                 sh """
                    ls -R
-                   sed -i 's|IMAGE_VERSION|${APP_VERSION}|g' k8s-jenkins/lms/deployment.yml
-                   kubectl apply -f k8s-jenkins/lms/deployment.yml
+                   sed -i 's|IMAGE_VERSION|${APP_VERSION}|g' deployment.yml
+                   kubectl apply -f deployment.yml
                 """
             }
         }
