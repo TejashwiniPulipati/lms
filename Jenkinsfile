@@ -4,6 +4,7 @@ pipeline {
     environment {
         REGISTRY_CREDENTIALS = "dockerhub-credentials"
         AWS_CREDENTIALS = 'aws-eks-credentials'
+        AWS_REGION = "eu-west-2"
         KUBECONFIG_CRED = 'kubeconfig'
     }    
 
@@ -34,21 +35,31 @@ pipeline {
             }
         }
 
-        stage('Deploy-to-kuberbetes') {
+       stage('Authenticate with AWS and EKS') {
             steps {
                 withCredentials([
-                   [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-eks-credentials'],
-                   file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_CRED')]) {
-                sh """
-                export KUBECONFIG=\$KUBECONFIG_CRED
-                echo "Using Kubeconfig: \$KUBECONFIG_CRED"
-
-                sed -i 's|IMAGE_VERSION|${APP_VERSION}|g' deployment.yml
-                kubectl apply -f deployment.yml
-                """
+                    [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-eks-credentials']]) {
+                    sh '''
+                        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+                        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+                        aws configure set region $AWS_REGION
+                        aws eks update-kubeconfig --region $AWS_REGION --name eks-jenkins
+                    '''
                 }
             }
         }
+        stage('Deploy to EKS') {
+            steps {
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_CRED')]) {
+                    sh '''
+                        export KUBECONFIG=$KUBECONFIG_CRED
+                        echo "Using Kubeconfig: \$KUBECONFIG_CRED"
 
+                        sed -i 's|IMAGE_VERSION|${APP_VERSION}|g' deployment.yml
+                        kubectl apply -f deployment.yml
+                    '''
+                }
+            }
+        }
     }
 }
