@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         REGISTRY_CREDENTIALS = "dockerhub-credentials"
+        NETWORK_NAME = "lms-network"
     }    
 
     stages {
