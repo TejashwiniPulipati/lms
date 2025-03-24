@@ -5,7 +5,7 @@ pipeline {
         REGISTRY_CREDENTIALS = "dockerhub-credentials"
         AWS_CREDENTIALS = 'aws-eks-credentials'
         AWS_REGION = "eu-west-2"
-        KUBECONFIG_CRED = 'kubeconfig'
+        KUBECONFIG_CREDENTIALS = 'kubeconfig'
     }    
 
     stages {
@@ -47,10 +47,10 @@ pipeline {
         }
         stage('Deploy to EKS') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_CRED')]) {
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_CREDENTIALS')]) {
                     sh '''
                         export KUBECONFIG=$KUBECONFIG_CRED
-                        echo "Using Kubeconfig: \$KUBECONFIG_CRED"
+                        echo "Using Kubeconfig: \$KUBECONFIG_CREDENTIALS"
 
                         sed -i 's|IMAGE_VERSION|${APP_VERSION}|g' deployment.yml
                         kubectl apply -f deployment.yml
