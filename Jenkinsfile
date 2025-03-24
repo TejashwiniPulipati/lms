@@ -37,7 +37,7 @@ pipeline {
                         docker push pulipatitejashwini/lms-fe:${APP_VERSION}
                         docker container rm -f lms-fe || true
                         docker run -dt --name lms-fe -p 80:80 \
-                             -e VITE_API_URL=http://lms-be:8080/api pulipatitejashwini/lms-fe:${APP_VERSION}
+                             -e VITE_API_URL=http://jenkinsip:8080/api pulipatitejashwini/lms-fe:${APP_VERSION}
                         
                         """
                     }
