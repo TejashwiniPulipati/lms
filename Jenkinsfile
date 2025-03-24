@@ -43,6 +43,7 @@ pipeline {
                 sed -i 's|IMAGE_VERSION|${APP_VERSION}|g' deployment.yml
                 kubectl apply -f deployment.yml
                 """
+                }
             }
         }
 
