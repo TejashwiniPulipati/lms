@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: lms
-        image: pulipatitejashwini/lms-fe:${APP_VERSION}
+        image: pulipatitejashwini/lms-fe:IMAGE_VERSION
         ports:
         - containerPort: 80
 ---
