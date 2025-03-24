@@ -23,8 +23,8 @@ pipeline {
                         sh """
                         echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
                         
-                        docker build -t pulipatitejashwini/lms-fe:${APP_VERSION} frontend/
-                        docker build -t pulipatitejashwini/lms-be:${APP_VERSION} backend/
+                        docker build -t pulipatitejashwini/lms-fe:${APP_VERSION} webapp/
+                        docker build -t pulipatitejashwini/lms-be:${APP_VERSION} api/
 
                         docker push pulipatitejashwini/lms-fe:${APP_VERSION}
                         docker push pulipatitejashwini/lms-be:${APP_VERSION}
