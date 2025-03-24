@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         REGISTRY_CREDENTIALS = "dockerhub-credentials"
+        KUBECONFIG_CRED = 'kubeconfig'
     }    
 
     stages {
@@ -35,7 +36,7 @@ pipeline {
         stage('Deploy-to-kuberbetes') {
             steps {
                 sh """
-                   kubectl apply -f deployment.yml
+                   kubectl apply -f k8s-jenkins/deployment.yml
                 """
             }
         }
