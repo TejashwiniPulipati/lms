@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         REGISTRY_CREDENTIALS = "dockerhub-credentials"
+        AWS_CREDENTIALS = 'aws-eks-credentials'
         KUBECONFIG_CRED = 'kubeconfig'
     }    
 
@@ -35,11 +36,13 @@ pipeline {
 
         stage('Deploy-to-kuberbetes') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_CRED')]) {
+                withCredentials([
+                   [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-eks-credentials'],
+                   file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_CRED')]) {
                 sh """
                 export KUBECONFIG=\$KUBECONFIG_CRED
                 echo "Using Kubeconfig: \$KUBECONFIG_CRED"
-                ls -R
+
                 sed -i 's|IMAGE_VERSION|${APP_VERSION}|g' deployment.yml
                 kubectl apply -f deployment.yml
                 """
