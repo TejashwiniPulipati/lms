@@ -35,10 +35,10 @@ pipeline {
 
         stage('Deploy-to-kuberbetes') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_PATH')]) {
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_CRED')]) {
                 sh """
-                export KUBECONFIG=\$KUBECONFIG_PATH
-                echo "Using Kubeconfig: \$KUBECONFIG_PATH"
+                export KUBECONFIG=\$KUBECONFIG_CRED
+                echo "Using Kubeconfig: \$KUBECONFIG_CRED"
                 ls -R
                 sed -i 's|IMAGE_VERSION|${APP_VERSION}|g' deployment.yml
                 kubectl apply -f deployment.yml
