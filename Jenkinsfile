@@ -36,7 +36,7 @@ pipeline {
         stage('Deploy-to-kuberbetes') {
             steps {
                 sh """
-                   sed -i 's|IMAGE_VERSION|${APP_VERSION}|g' k8s-jenkins/deployment.yml
+                   sed -i 's|IMAGE_VERSION|${APP_VERSION}|g' k8s-jenkins/lms/deployment.yml
                    kubectl apply -f k8s-jenkins/lms/deployment.yml
                 """
             }
