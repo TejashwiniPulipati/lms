@@ -46,7 +46,7 @@ pipeline {
 
                     # Start Database Container
                     docker container rm -f lms-db || true
-                    docker run -dt --name chatapp-db -p 5432:5432 \
+                    docker run -dt --name lms-db -p 5432:5432 \
                         -e POSTGRES_USER=postgres \
                         -e POSTGRES_PASSWORD=lms@12345 \
                         -e POSTGRES_DB=lmsdb \
