@@ -50,7 +50,7 @@ pipeline {
                         -e POSTGRES_USER=postgres \
                         -e POSTGRES_PASSWORD=lms@12345 \
                         -e POSTGRES_DB=lmsdb \
-                        --network chatapp-network postgres
+                        --network ${NETWORK_NAME} postgres
 
                     # Start Backend Container
                     docker pull pulipatitejashwini/lms-be:${APP_VERSION}
