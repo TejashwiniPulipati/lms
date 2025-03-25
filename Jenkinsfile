@@ -46,24 +46,19 @@ pipeline {
 
                     # Start Database Container
                     docker container rm -f lms-db || true
-                    docker run -dt --name lms-db -p 5432:5432 \
-                        -e POSTGRES_USER=postgres \
-                        -e POSTGRES_PASSWORD=app12345 \
-                        -e POSTGRES_DB=lmsdb \
+                    docker run -dt --name lms-db -e POSTGRES_PASSWORD=lms12345 postgres \
                         --network ${NETWORK_NAME} postgres
 
                     # Start Backend Container
                     docker pull pulipatitejashwini/lms-be:${APP_VERSION}
                     docker container rm -f lms-be || true
                     docker run -dt --name lms-be -p 8081:8080 \
-                        -e DATABASE_URL="postgresql://postgres:app12345@lms-db:5432/lmsdb" \
                         --network ${NETWORK_NAME} pulipatitejashwini/lms-be:${APP_VERSION}
 
                     # Start Frontend Container
                     docker pull pulipatitejashwini/lms-fe:${APP_VERSION}
                     docker container rm -f lms-fe || true
                     docker run -dt --name lms-fe -p 80:80 \
-                        -e VITE_API_URL=http://3.9.139.209:8081/api \
                         --network ${NETWORK_NAME} pulipatitejashwini/lms-fe:${APP_VERSION}
                     """
                 }
